@@ -1,10 +1,26 @@
 import { Component } from 'react';
-
+import Modal from './Modal';
 class App extends Component {
-    state = {};
+    state = {
+        showModal: true,
+    };
+
+    modalToggle = () => {
+        this.setState(({ showModal }) => ({
+            showModal: !showModal,
+        }));
+    };
 
     render() {
-        return 'return';
+        const { showModal } = this.state;
+        return (
+            <div>
+                {showModal && (
+                    <Modal closeModal={this.modalToggle} />
+                )}
+            </div>
+        );
     }
 }
+
 export default App;
