@@ -10,12 +10,14 @@ export default class Modal extends Component {
             'keydown',
             this.handleEscKey,
         );
+        document.body.style.overflow = 'hidden';
     }
     componentWillUnmount() {
         window.removeEventListener(
             'keydown',
             this.handleEscKey,
         );
+        document.body.style.overflow = 'visible';
     }
 
     handleEscKey = evt => {
