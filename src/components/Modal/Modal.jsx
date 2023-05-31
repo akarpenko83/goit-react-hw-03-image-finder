@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { createPortal } from 'react-dom';
 import { ModalContent, Overlay } from './Modal.styled';
+import { Loading } from 'notiflix/build/notiflix-loading-aio';
 
 const modalRoot = document.querySelector('#modal-root');
 
@@ -11,6 +12,7 @@ export default class Modal extends Component {
             this.handleEscKey,
         );
         document.body.style.overflow = 'hidden';
+        Loading.arrows();
     }
     componentWillUnmount() {
         window.removeEventListener(
@@ -18,10 +20,12 @@ export default class Modal extends Component {
             this.handleEscKey,
         );
         document.body.style.overflow = 'visible';
+        Loading.remove();
     }
 
     handleEscKey = evt => {
         if (evt.code === 'Escape') {
+            console.log('ESC');
             this.props.closeModal();
         }
     };
