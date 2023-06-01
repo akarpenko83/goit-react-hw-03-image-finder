@@ -2,11 +2,11 @@ import React from 'react';
 
 import Modal from './Modal';
 import Searchbar from './Searchbar/Searchbar';
-import PixabayApi from 'services/pixabayApi';
+import fetchPhotos from 'services/pixabayApi';
 import ImageGallery from './ImageGallery/ImageGallery';
 import LoadMoreBtn from './Button/LoadMoreBtn';
 
-const pixabayApi = new PixabayApi();
+// const pixabayApi = new PixabayApi();
 
 const STATUS = {
     IDLE: 'idle',
@@ -33,10 +33,7 @@ class App extends React.PureComponent {
     };
     async componentDidUpdate(prevProps, prevState) {
         if (prevState.page !== this.state.page) {
-            pixabayApi.searchQuery = this.state.searchQuery;
-            pixabayApi.page = this.state.page;
-            pixabayApi.per_page = this.state.per_page;
-            const response = await pixabayApi.fetchPhotos();
+            const response = await fetchPhotos(this.state);
 
             this.setState({
                 pixabay: [
@@ -50,16 +47,37 @@ class App extends React.PureComponent {
         if (
             prevState.searchQuery !== this.state.searchQuery
         ) {
-            pixabayApi.searchQuery = this.state.searchQuery;
-            pixabayApi.page = this.state.page;
-            pixabayApi.per_page = this.state.per_page;
-            const response = await pixabayApi.fetchPhotos();
-
-            this.setState({
-                pixabay: response.hits,
-                page: 1,
-                status: STATUS.RESOLVED,
-            });
+            try {
+                window.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: 'smooth',
+                });
+                await this.setState({
+                    page: 1,
+                });
+                const response = await fetchPhotos(
+                    this.state,
+                );
+                console.log(
+                    'response from API: ',
+                    response,
+                );
+                this.setState({
+                    pixabay: response.hits,
+                    status: STATUS.RESOLVED,
+                });
+            } catch (error) {
+                console.log(error);
+                this.setState({
+                    pixabay: [],
+                    page: 1,
+                    showModal: true,
+                    picLink:
+                        'https://www.cloudways.com/blog/wp-content/uploads/wordpress-404-error.jpg',
+                    status: STATUS.REJECTED,
+                });
+            }
         }
     }
     onPictureClick = picture => {
@@ -80,7 +98,6 @@ class App extends React.PureComponent {
         const totalPages = Math.ceil(
             this.state.totalPages / this.state.per_page,
         );
-        console.log(totalPages);
         if (totalPages !== this.state.page) {
             return true;
         }
@@ -90,7 +107,6 @@ class App extends React.PureComponent {
     render() {
         const { showModal, pixabay, picLink, status } =
             this.state;
-        console.log(pixabay);
         return (
             <>
                 <Searchbar onSubmit={this.onSubmit} />
@@ -110,6 +126,13 @@ class App extends React.PureComponent {
                     this.getEndOfQuery() && (
                         <LoadMoreBtn
                             onLoadMore={this.onLoadMore}
+                        />
+                    )}
+                {status === STATUS.REJECTED &&
+                    showModal && (
+                        <Modal
+                            closeModal={this.modalClose}
+                            picSrc={picLink}
                         />
                     )}
             </>
