@@ -41,8 +41,8 @@ export default class Modal extends Component {
             <Overlay onClick={this.handleBackdropClick}>
                 <ModalContent>
                     <img
-                        src="https://unsplash.it/800/600"
-                        alt=""
+                        src={this.props.picSrc}
+                        alt="cat"
                     />
                     {this.props.children}
                 </ModalContent>

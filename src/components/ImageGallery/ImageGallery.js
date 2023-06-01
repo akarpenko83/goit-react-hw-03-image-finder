@@ -7,18 +7,25 @@ import {
 } from './ImageGallery.styled';
 
 export default function ImageGallery(props) {
-    console.log(props.pictures);
-    const pics = props.pictures;
+    const { pictures, onPictureClick } = props;
     return (
         <ImageGalleryContainer>
-            {pics.map(({ id, webformatURL, tags }) => (
-                <ImageGalleryItemContainer key={id}>
-                    <ImageGalleryItemImage
-                        src={webformatURL}
-                        alt={tags}
-                    ></ImageGalleryItemImage>
-                </ImageGalleryItemContainer>
-            ))}
+            {pictures.map(
+                ({ webformatURL, tags }, index) => (
+                    <ImageGalleryItemContainer key={index}>
+                        <ImageGalleryItemImage
+                            onClick={() => {
+                                console.log(webformatURL);
+                                onPictureClick(
+                                    webformatURL,
+                                );
+                            }}
+                            src={webformatURL}
+                            alt={tags}
+                        ></ImageGalleryItemImage>
+                    </ImageGalleryItemContainer>
+                ),
+            )}
         </ImageGalleryContainer>
     );
 }

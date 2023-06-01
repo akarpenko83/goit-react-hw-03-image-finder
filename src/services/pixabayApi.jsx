@@ -6,6 +6,7 @@ export default class PixabayApi {
     constructor() {
         this.searchQuery = '';
         this.page = 1;
+        this.per_page = 0;
         // form,
     }
     encodeQuery(searchQuery) {
@@ -25,7 +26,7 @@ export default class PixabayApi {
                 orientation: 'horizontal',
                 safesearch: 'true',
                 page: this.page,
-                per_page: '12',
+                per_page: this.per_page,
             },
         };
         try {
@@ -59,9 +60,9 @@ export default class PixabayApi {
             Notify.info(
                 `Hooray! We found ${response.data.totalHits} images on ${totalPages} pages. Current page: ${this.page}`,
             );
-            this.page += 1;
-            console.log(response.data.hits);
-            return response.data.hits;
+            // this.page += 1;
+            console.log(response.data);
+            return response.data;
         } catch (error) {
             this.searchQuery = '';
         }
@@ -70,7 +71,7 @@ export default class PixabayApi {
         return this.searchQuery;
     }
     set query(newQuery) {
-        this.page = 1;
+        // this.page = 1;
         this.searchQuery = newQuery;
     }
 }

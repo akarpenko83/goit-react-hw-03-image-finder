@@ -15,6 +15,9 @@ export default class Searchbar extends React.Component {
         const form = evt.currentTarget;
         const queryResult = form.elements.query.value;
         console.log(queryResult);
+        if (!queryResult) {
+            return alert('please enter a query');
+        }
         this.props.onSubmit(queryResult);
         // this.formReset();
         // form.reset();
