@@ -13,6 +13,7 @@ export default class Modal extends Component {
         );
         document.body.style.overflow = 'hidden';
         Loading.arrows();
+        Loading.remove(300);
     }
     componentWillUnmount() {
         window.removeEventListener(
@@ -20,7 +21,6 @@ export default class Modal extends Component {
             this.handleEscKey,
         );
         document.body.style.overflow = 'visible';
-        Loading.remove();
     }
 
     handleEscKey = evt => {

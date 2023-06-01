@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Loading } from 'notiflix/build/notiflix-loading-aio';
 import Modal from './Modal';
 import Searchbar from './Searchbar/Searchbar';
 import fetchPhotos from 'services/pixabayApi';
@@ -33,9 +33,10 @@ class App extends React.PureComponent {
     };
     async componentDidUpdate(prevProps, prevState) {
         if (prevState.page !== this.state.page) {
+            Loading.arrows();
             const response = await fetchPhotos(this.state);
 
-            this.setState({
+            await this.setState({
                 pixabay: [
                     ...this.state.pixabay,
                     ...response.hits,
@@ -43,6 +44,7 @@ class App extends React.PureComponent {
                 totalPages: response.totalHits,
                 status: STATUS.RESOLVED,
             });
+            Loading.remove(500);
         }
         if (
             prevState.searchQuery !== this.state.searchQuery
@@ -56,6 +58,7 @@ class App extends React.PureComponent {
                 await this.setState({
                     page: 1,
                 });
+                Loading.arrows();
                 const response = await fetchPhotos(
                     this.state,
                 );
@@ -67,6 +70,7 @@ class App extends React.PureComponent {
                     pixabay: response.hits,
                     status: STATUS.RESOLVED,
                 });
+                Loading.remove(500);
             } catch (error) {
                 console.log(error);
                 this.setState({
@@ -80,6 +84,7 @@ class App extends React.PureComponent {
             }
         }
     }
+
     onPictureClick = picture => {
         this.setState({
             picLink: picture,
