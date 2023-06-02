@@ -12,8 +12,6 @@ export default class Modal extends Component {
             this.handleEscKey,
         );
         document.body.style.overflow = 'hidden';
-        Loading.arrows();
-        Loading.remove(300);
     }
     componentWillUnmount() {
         window.removeEventListener(

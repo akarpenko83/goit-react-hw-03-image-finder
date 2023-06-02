@@ -29,48 +29,37 @@ class App extends React.PureComponent {
     onSubmit = queryResult => {
         this.setState({
             searchQuery: queryResult,
+            pixabay: [],
+            picLink: null,
+            page: 1,
+            per_page: 12,
+            totalHits: 0,
+            status: STATUS.IDLE,
         });
     };
     async componentDidUpdate(prevProps, prevState) {
-        if (prevState.page !== this.state.page) {
-            Loading.arrows();
-            const response = await fetchPhotos(this.state);
-
-            await this.setState({
-                pixabay: [
-                    ...this.state.pixabay,
-                    ...response.hits,
-                ],
-                totalPages: response.totalHits,
-                status: STATUS.RESOLVED,
-            });
-            Loading.remove(500);
-        }
         if (
+            prevState.page !== this.state.page ||
             prevState.searchQuery !== this.state.searchQuery
         ) {
             try {
-                window.scrollTo({
-                    top: 0,
-                    left: 0,
-                    behavior: 'smooth',
-                });
-                await this.setState({
-                    page: 1,
-                });
                 Loading.arrows();
                 const response = await fetchPhotos(
                     this.state,
                 );
+                await this.setState({
+                    // page: 1,
+                    pixabay: [
+                        ...this.state.pixabay,
+                        ...response.hits,
+                    ],
+                    totalHits: response.totalHits,
+                    status: STATUS.RESOLVED,
+                });
                 console.log(
                     'response from API: ',
                     response,
                 );
-                this.setState({
-                    pixabay: response.hits,
-                    status: STATUS.RESOLVED,
-                });
-                Loading.remove(500);
             } catch (error) {
                 console.log(error);
                 this.setState({
@@ -81,6 +70,8 @@ class App extends React.PureComponent {
                         'https://www.cloudways.com/blog/wp-content/uploads/wordpress-404-error.jpg',
                     status: STATUS.REJECTED,
                 });
+            } finally {
+                Loading.remove();
             }
         }
     }
@@ -96,12 +87,19 @@ class App extends React.PureComponent {
     };
     onLoadMore = () => {
         console.log(this.state.page);
-        this.setState({ page: this.state.page + 1 });
+        this.setState(prevState => ({
+            page: prevState.page + 1,
+        }));
     };
 
     getEndOfQuery() {
         const totalPages = Math.ceil(
-            this.state.totalPages / this.state.per_page,
+            this.state.totalHits / this.state.per_page,
+        );
+        console.log(
+            this.state.page,
+            ' of pages ',
+            totalPages,
         );
         if (totalPages !== this.state.page) {
             return true;
@@ -121,12 +119,12 @@ class App extends React.PureComponent {
                         picSrc={picLink}
                     />
                 )}
-                {status === STATUS.RESOLVED && (
-                    <ImageGallery
-                        pictures={pixabay}
-                        onPictureClick={this.onPictureClick}
-                    />
-                )}
+
+                <ImageGallery
+                    pictures={pixabay}
+                    onPictureClick={this.onPictureClick}
+                />
+
                 {status === STATUS.RESOLVED &&
                     this.getEndOfQuery() && (
                         <LoadMoreBtn
