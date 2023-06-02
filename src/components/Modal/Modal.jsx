@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { createPortal } from 'react-dom';
 import { ModalContent, Overlay } from './Modal.styled';
-import { Loading } from 'notiflix/build/notiflix-loading-aio';
+// import { Loading } from 'notiflix/build/notiflix-loading-aio';
 
 const modalRoot = document.querySelector('#modal-root');
 
